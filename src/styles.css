@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  background-color: #24a8fb;
+  height: 100%;
+}
+
+main {
+  padding: 10px;
+  background: #d3eefe;
+  height: 100%;
+}
+
+.btn-groups {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+}
+
+.btn-groups button {
+  margin: 10px 0;
+}
+
+.option-item {
+  margin: 10px 0;
+}
+
+.toast {
+  margin-top: 10px;
+}
+
+canvas {
+  /* width: 100%; */
+  /* height: 100%; */
+}

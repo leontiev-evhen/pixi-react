@@ -82,10 +82,9 @@ export default function App() {
     const triangle = drawFigure("triangle");
     triangle.x = x;
     triangle.y = y;
-    triangle.moveTo(options.triangle.size, 0);
+    triangle.moveTo(0, 0);
+    triangle.lineTo(-options.triangle.size / 2, options.triangle.size);
     triangle.lineTo(options.triangle.size / 2, options.triangle.size);
-    triangle.lineTo(0, 0);
-    triangle.lineTo(options.triangle.size / 2, 0);
     triangle.endFill();
     return triangle;
   }

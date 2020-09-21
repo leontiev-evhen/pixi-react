@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Tabs, Tab, Toast } from "react-bootstrap";
+import { Tabs, Tab, Toast, Button } from "react-bootstrap";
 import OptionTab from "../components/OptionTab";
 import { setItem } from "../storage";
 import OptionsContext from "../context";
@@ -12,6 +12,14 @@ export default function Options() {
     options[key] = value;
     setItem("options", options);
     setHasAlert(true);
+  }
+
+  function dowload() {
+    const a = document.createElement("a");
+    const file = new Blob([JSON.stringify(options)], { type: "text/plain" });
+    a.href = URL.createObjectURL(file);
+    a.download = "options.json";
+    a.click();
   }
 
   return (
@@ -33,6 +41,13 @@ export default function Options() {
             name="triangle"
             onSave={handleTab}
           />
+        </Tab>
+        <Tab eventKey="dowload" title="Dowload Options">
+          <div className="btn-download">
+            <Button variant="primary" onClick={dowload}>
+              Download
+            </Button>
+          </div>
         </Tab>
       </Tabs>
       <Toast

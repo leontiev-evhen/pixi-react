@@ -22,10 +22,9 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const el = ref.current;
-    el.addEventListener("click", handleClick);
-    return () => el.removeEventListener("click", handleClick);
-  }, [shapeType]);
+    renderer.plugins.interaction.on("pointerdown", handleClick);
+    return () => renderer.plugins.interaction.off("pointerdown", handleClick);
+  });
 
   useEffect(() => {
     function resize() {
@@ -43,9 +42,8 @@ export default function App() {
   }, []);
 
   function handleClick(e) {
-    const rect = ref.current.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
+    let x = e.data.global.x;
+    let y = e.data.global.y;
     let graphics;
     switch (true) {
       case shapeType === "circle":

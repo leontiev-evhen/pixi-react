@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { Button } from "react-bootstrap";
 import RangeSlider from "react-bootstrap-range-slider";
 
@@ -39,3 +40,12 @@ export default function OptionTab({ name, option, onSave }) {
     </>
   );
 }
+
+OptionTab.propTypes = {
+  name: PropTypes.string.isRequired,
+  option: PropTypes.shape({
+    size: PropTypes.number.isRequired,
+    color: PropTypes.string.isRequired,
+  }),
+  onSave: PropTypes.func.isRequired,
+};

@@ -3,15 +3,7 @@ import * as PIXI from "pixi.js";
 import { Row, Col, Button } from "react-bootstrap";
 import OptionsContext from "../context";
 
-const size = [900, 600];
-const ratio = size[0] / size[1];
-const renderer = new PIXI.autoDetectRenderer({
-  // width: size[0],
-  // height: size[1],
-  // roundPixels: true,
-  // resolution: window.devicePixelRatio || 1,
-});
-
+const renderer = new PIXI.autoDetectRenderer(null);
 const stage = new PIXI.Container();
 stage.interactive = true;
 
@@ -26,27 +18,24 @@ export default function App() {
     if (el && el.children.length === 0) {
       el.appendChild(renderer.view);
     }
-    return () => reset();
+    return () => stage.removeChildren(0);
   }, []);
 
   useEffect(() => {
     const el = ref.current;
-    el.addEventListener("mousedown", handleClick, false);
-    return () => el.removeEventListener("mousedown", handleClick, false);
+    el.addEventListener("click", handleClick);
+    return () => el.removeEventListener("click", handleClick);
   }, [shapeType]);
 
   useEffect(() => {
     function resize() {
-      let w = ref.current.offsetWidth;
-      let h = ref.current.offsetWidth / ratio;
-      if (ref.current.offsetWidth / ref.current.offsetHeight >= ratio) {
-        w = ref.current.offsetHeight * ratio;
-        h = ref.current.offsetHeight;
-      }
+      const size = [900, 600];
+      const ratio = size[0] / size[1];
+      const w = ref.current.offsetWidth;
+      const h = ref.current.offsetWidth / ratio;
       renderer.view.style.width = w + "px";
       renderer.view.style.height = h + "px";
       renderer.resize(w, h);
-      //stage.scale.set(w / size[0], h / size[1]);
     }
     resize();
     window.addEventListener("resize", resize);
@@ -119,29 +108,33 @@ export default function App() {
   }
 
   function reset() {
-    stage.removeChildren(0);
     graphicsArr.forEach((item) => item.clear());
     setGraphicsArr([]);
   }
+
+  function getVariant(type) {
+    return shapeType === type ? "secondary" : "primary";
+  }
+
   return (
     <>
       <Row>
         <Col md={2} sm={12}>
           <div className="btn-groups">
             <Button
-              variant={shapeType === "circle" ? "secondary" : "primary"}
+              variant={getVariant("circle")}
               onClick={() => handleShapeType("circle")}
             >
               Circle
             </Button>
             <Button
-              variant={shapeType === "rectangle" ? "secondary" : "primary"}
+              variant={getVariant("rectangle")}
               onClick={() => handleShapeType("rectangle")}
             >
               Rectangle
             </Button>
             <Button
-              variant={shapeType === "triangle" ? "secondary" : "primary"}
+              variant={getVariant("triangle")}
               onClick={() => handleShapeType("triangle")}
             >
               Triangle

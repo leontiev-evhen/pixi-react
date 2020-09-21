@@ -14,17 +14,76 @@ export default function App() {
   const [graphicsArr, setGraphicsArr] = useState([]);
 
   useEffect(() => {
+    function handleClick(e) {
+      let x = e.data.global.x;
+      let y = e.data.global.y;
+      let graphics;
+      switch (true) {
+        case shapeType === "circle":
+          graphics = drawCircle(x, y);
+          break;
+        case shapeType === "rectangle":
+          graphics = drawRectangle(x, y);
+          break;
+        case shapeType === "triangle":
+          graphics = drawTriangle(x, y);
+          break;
+        default:
+          break;
+      }
+      setGraphicsArr((arr) => [...arr, graphics]);
+      stage.addChild(graphics);
+      animate();
+    }
+
+    function drawRectangle(x, y) {
+      const rect = drawFigure("rectangle");
+      rect.drawRect(x, y, options.rectangle.size, options.rectangle.size);
+      rect.endFill();
+      return rect;
+    }
+
+    function drawTriangle(x, y) {
+      const triangle = drawFigure("triangle");
+      triangle.x = x;
+      triangle.y = y;
+      triangle.moveTo(0, 0);
+      triangle.lineTo(-options.triangle.size / 2, options.triangle.size);
+      triangle.lineTo(options.triangle.size / 2, options.triangle.size);
+      triangle.endFill();
+      return triangle;
+    }
+
+    function drawCircle(x, y) {
+      const circle = drawFigure("circle");
+      circle.lineStyle(0);
+      circle.drawCircle(x, y, options.circle.size);
+      circle.endFill();
+      return circle;
+    }
+
+    function drawFigure(key) {
+      const figure = new PIXI.Graphics();
+      figure.beginFill(PIXI.utils.string2hex(options[key].color));
+      return figure;
+    }
+
+    function animate() {
+      renderer.render(stage);
+      requestAnimationFrame(animate);
+    }
+
+    renderer.plugins.interaction.on("pointerdown", handleClick);
+    return () => renderer.plugins.interaction.off("pointerdown", handleClick);
+  }, [shapeType, options]);
+
+  useEffect(() => {
     const el = ref.current;
     if (el && el.children.length === 0) {
       el.appendChild(renderer.view);
     }
     return () => stage.removeChildren(0);
   }, []);
-
-  useEffect(() => {
-    renderer.plugins.interaction.on("pointerdown", handleClick);
-    return () => renderer.plugins.interaction.off("pointerdown", handleClick);
-  });
 
   useEffect(() => {
     function resize() {
@@ -40,65 +99,6 @@ export default function App() {
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
   }, []);
-
-  function handleClick(e) {
-    let x = e.data.global.x;
-    let y = e.data.global.y;
-    let graphics;
-    switch (true) {
-      case shapeType === "circle":
-        graphics = drawCircle(x, y);
-        break;
-      case shapeType === "rectangle":
-        graphics = drawRectangle(x, y);
-        break;
-      case shapeType === "triangle":
-        graphics = drawTriangle(x, y);
-        break;
-      default:
-        break;
-    }
-    setGraphicsArr((arr) => [...arr, graphics]);
-    stage.addChild(graphics);
-    animate();
-  }
-
-  function drawCircle(x, y) {
-    const circle = drawFigure("circle");
-    circle.lineStyle(0);
-    circle.drawCircle(x, y, options.circle.size);
-    circle.endFill();
-    return circle;
-  }
-
-  function drawRectangle(x, y) {
-    const rect = drawFigure("rectangle");
-    rect.drawRect(x, y, options.rectangle.size, options.rectangle.size);
-    rect.endFill();
-    return rect;
-  }
-
-  function drawTriangle(x, y) {
-    const triangle = drawFigure("triangle");
-    triangle.x = x;
-    triangle.y = y;
-    triangle.moveTo(0, 0);
-    triangle.lineTo(-options.triangle.size / 2, options.triangle.size);
-    triangle.lineTo(options.triangle.size / 2, options.triangle.size);
-    triangle.endFill();
-    return triangle;
-  }
-
-  function drawFigure(key) {
-    const figure = new PIXI.Graphics();
-    figure.beginFill(PIXI.utils.string2hex(options[key].color));
-    return figure;
-  }
-
-  function animate() {
-    renderer.render(stage);
-    requestAnimationFrame(animate);
-  }
 
   function handleShapeType(value) {
     setShapeType(value);
